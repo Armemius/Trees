@@ -5,6 +5,8 @@ int main() {
 	AVLTree tree;
 	std::vector<int> insert{5, 15, 10, 50, 80, 150, 190, 140, 200, 230};
 	tree.add(insert);
-
+	std::cout << std::endl;
+	tree.remove(150);
+	std::cout << std::endl;
 	tree.out();
 }

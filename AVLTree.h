@@ -31,11 +31,65 @@ class AVLTree : public ITree {
 		}
 	}
 
-	Node* t_remove(int field) override {
+	Node* t_remove(int data) override {
+		Node* ob = this->find(data);
+		if (ob == null)
+			return null;
+		if (ob->isLeaf()) {
+			if (ob == root) {
+				root = null;
+				return null;
+			}
+			ob->getNode() = null;
+			Node* ret_value = ob->parent;
+			delete ob;
+			return ret_value;
+		}
+		if (getHeight(ob->left) > getHeight(ob->right)) {
+			Node* tmp = ob->left;
+			for (; tmp->right != null; tmp = tmp->right);
+			dswap(ob, tmp);
+			return r_remove(data, tmp);
+		} else {
+			Node* tmp = ob->right;
+			for (; tmp->left != null; tmp = tmp->left);
+			dswap(ob, tmp);
+			return r_remove(data, tmp);
+		}
+		return null;
+	}
+
+	Node* r_remove(int data, Node* node) {
+		Node* ob = node;
+		if (ob == null)
+			return null;
+		if (ob->isLeaf()) {
+			if (ob == root) {
+				root = null;
+				return null;
+			}
+			ob->getNode() = null;
+			Node* ret_value = ob->parent;
+			delete ob;
+			return ret_value;
+		}
+		if (getHeight(ob->left) > getHeight(ob->right)) {
+			Node* tmp = ob->left;
+			for (; tmp->right != null; tmp = tmp->right);
+			dswap(ob, tmp);
+			return r_remove(data, tmp);
+		}
+		else {
+			Node* tmp = ob->right;
+			for (; tmp->left != null; tmp = tmp->left);
+			dswap(ob, tmp);
+			return r_remove(data, tmp);
+		}
 		return null;
 	}
 
 	void add_action(Node* node) override {
+		t_size++;
 		node->color = GREEN;
 		for (Node* tmp = this->root; tmp != node;) {
 			tmp->weight = getHeight(tmp->right) - getHeight(tmp->left);
@@ -52,7 +106,20 @@ class AVLTree : public ITree {
 	}
 
 	void remove_action(Node* node) override {
-
+		t_size--;
+		for (Node* tmp = this->root; tmp != node;) {
+			tmp->weight = getHeight(tmp->right) - getHeight(tmp->left);
+			if (tmp->data > node->data) {
+				tmp = tmp->left;
+			}
+			else if (tmp->data < node->data) {
+				tmp = tmp->right;
+			}
+		}
+		for (Node* tmp = node; tmp != null; tmp = tmp->parent) {
+			if (std::abs(tmp->weight) >= 2)
+				balance(tmp);
+		}
 	}
 
 	void balance(Node* start) {
