@@ -2,11 +2,20 @@
 #include "TInclude.h"
 
 int main() {
-	AVLTree tree;
-	std::vector<int> insert{5, 15, 10, 50, 80, 150, 190, 140, 200, 230};
-	tree.add(insert);
-	std::cout << std::endl;
-	tree.remove(150);
-	std::cout << std::endl;
-	tree.out();
+	RBTree tree;
+	for (;;) {
+		char c;
+		int n;
+		std::cin >> c >> n;
+		system("cls");
+		if (c == 'a' || c == 'A')
+			tree.add(n);
+		if (c == 'd' || c == 'D')
+			tree.remove(n);
+		if (c == 'c' || c == 'C')
+			tree = RBTree();
+		std::cout << std::endl;
+		tree.out();
+		std::cout << std::endl;
+	}
 }

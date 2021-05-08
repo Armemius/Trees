@@ -5,7 +5,6 @@ class AVLTree : public ITree {
 	Node* t_add(int data) override {
 		if (this->root == null) {
 			this->root = new Node(data);
-			t_size++;
 			return root;
 		}
 		Node* tmp = root;
@@ -13,7 +12,6 @@ class AVLTree : public ITree {
 			if (tmp->data > data) {
 				if (tmp->left == null) {
 					tmp->left = new Node(data, tmp);
-					t_size++;
 					return tmp->left;
 				}
 				tmp = tmp->left;
@@ -21,7 +19,6 @@ class AVLTree : public ITree {
 			else if (tmp->data < data) {
 				if (tmp->right == null) {
 					tmp->right = new Node(data, tmp);
-					t_size++;
 					return tmp->right;
 				}
 				tmp = tmp->right;

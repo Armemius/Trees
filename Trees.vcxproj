@@ -147,6 +147,7 @@
     <ClInclude Include="BinaryTree.h" />
     <ClInclude Include="ITree.h" />
     <ClInclude Include="Nodes.h" />
+    <ClInclude Include="RBTree.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TInclude.h" />
   </ItemGroup>
