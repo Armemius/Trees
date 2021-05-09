@@ -17,5 +17,7 @@ int main() {
 		std::cout << std::endl;
 		tree.out();
 		std::cout << std::endl;
+		tree.getBalance();
+		std::cout << std::endl;
 	}
 }

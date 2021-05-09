@@ -1,2 +1,5 @@
-﻿  Source.cpp
+﻿  Nodes.cpp
+  Source.cpp
+  Создание кода...
+C:\Trees\Nodes.cpp(20): warning C4715: Node::getNode: значение возвращается не при всех путях выполнения
   Trees.vcxproj -> C:\Trees\x64\Debug\Trees.exe

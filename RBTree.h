@@ -2,6 +2,25 @@
 #include "ITree.h"
 
 class RBTree : public ITree {
+public:
+	void getBalance() {
+		Node* node = root;
+		if (node == null) return;
+		int n = 0;
+		if (root->color == BLACK) n++;
+		getBalance(root, n);
+	}
+private:
+	void getBalance(Node* node, int count) {
+		if (node == null) {
+			std::cout << count << " ";
+			return;
+		}
+		if (node->color == BLACK) count++;
+		getBalance(node->left, count);
+		getBalance(node->right, count);
+	}
+
 	Node* t_add(int data) override {
 		if (root == null) {
 			root = new Node(data);
@@ -31,18 +50,13 @@ class RBTree : public ITree {
 	void add_action(Node* node) override {
 		t_size++;
 		node->color = RED;
-		for (Node* i = node; ; i = i->parent) {
-			if (i == null)
-				return;
-			if (i->parent == null)
-				return;
-			if (i->parent->parent == null)
-				return;
-			add_balance(i);
-		}
+		add_balance(node);
+		root->color = BLACK;
 	}
 
 	void add_balance(Node* node) {
+		if (node == null)
+			return;
 		if (node == root) {
 			node->color = BLACK;
 #ifdef DEBUG
@@ -50,12 +64,18 @@ class RBTree : public ITree {
 #endif
 			return;
 		}
+		if (node->parent == null)
+			return;
 		if (node->parent->color == BLACK) {
 #ifdef DEBUG
 			std::cout << "Node's father is black, no actions needed\n";
 #endif
 			return;
 		}
+		if (node->parent->parent == null)
+			return;
+		if (node->color == BLACK || node->parent->color == BLACK)
+			return;
 #ifdef DEBUG
 		std::cout << "Violation occured: duplication of red nodes\n";
 #endif
@@ -68,6 +88,7 @@ class RBTree : public ITree {
 				node->parent->parent->color = RED;
 			if (getUncle(node) != null)
 				getUncle(node)->color = BLACK;
+			add_balance(node->parent->parent);
 			return;
 		}
 #ifdef DEBUG
@@ -80,26 +101,32 @@ class RBTree : public ITree {
 #ifdef DEBUG
 			std::cout << "Triangle moment on right side\n";
 #endif
+			Node* tmp = node->right;
 			grandfather->right = node;
 			node->parent = grandfather;
 			node->right = father;
-			node->left = null;
 			father->parent = node;
-			father->left = null;
-			node = father;
+			father->left = tmp;
+			if (tmp != null)
+				tmp->parent = father;
+			add_balance(father);
+			return;
 		}
 		if (grandfather->left != null)
 		if (grandfather->left->right == node) {
 #ifdef DEBUG
 			std::cout << "Triangle moment on left side\n";
 #endif
+			Node* tmp = node->left;
 			grandfather->left = node;
 			node->parent = grandfather;
 			node->left = father;
-			node->right = null;
 			father->parent = node;
-			father->right = null;
-			node = father;
+			father->right = tmp;
+			if (tmp != null)
+				tmp->parent = father;
+			add_balance(father);
+			return;
 		}
 		if (grandfather->right != null)
 		if (grandfather->right->right == node) {
@@ -120,14 +147,18 @@ class RBTree : public ITree {
 			}
 			A->left = B;
 			A->right = X;
-			A->color = BLACK;
 			B->left = C;
 			B->right = y;
 			B->parent = A;
 			if (y != null)
 				y->parent = B;
-			X->color = RED;
+			A->color = BLACK;
 			B->color = RED;
+			X->color = RED;
+			if (C != null)
+				C->color = BLACK;
+			add_balance(A);
+			return;
 		}
 		if (grandfather->left != null)
 		if (grandfather->left->left == node) {
@@ -148,14 +179,18 @@ class RBTree : public ITree {
 			}
 			A->right = B;
 			A->left = X;
-			A->color = BLACK;
 			B->right = C;
 			B->left = y;
 			B->parent = A;
 			if (y != null)
 				y->parent = B;
-			X->color = RED;
+			A->color = BLACK;
 			B->color = RED;
+			X->color = RED;
+			if (C != null)
+				C->color = BLACK;
+			add_balance(A);
+			return;
 		}
 	}
 
@@ -188,14 +223,6 @@ class RBTree : public ITree {
 	}
 
 	void remove_action(Node* node) override {
-
-	}
-
-	void LeftRotation(Node* node) {
-
-	}
-
-	void RightRotation(Node* node) {
 
 	}
 };
