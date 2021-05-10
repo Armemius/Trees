@@ -257,8 +257,12 @@ private:
 			}
 		}
 		//Ahahaha ya neuravnovesheniy mne nuzhno v izolyator)))
-		if (node->color == BLACK && node->isLeaf())
-			remove_balance(node);
+		if (node->color == BLACK && node->isLeaf()) {
+			node->getNode() = null;
+			Node* tmp = node->parent;
+			delete node;
+			remove_balance(tmp);
+		}
 		return null;
 	}
 
