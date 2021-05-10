@@ -266,10 +266,12 @@ private:
 		return null;
 	}
 
-	//Фиксы и допилить зеркальную операцию
+	//Протестить и пофиксить все баги
 	void remove_balance(Node* node) {
-		if (node->right != null)
-			throw std::exception("AMOGUS");
+		if (node->right != null) {
+			m_remove_balance(node);
+			return;
+		}
 		Node* son = node->left;
 		if (node->color == RED && son->color == BLACK) {
 #ifdef DEBUG
@@ -477,17 +479,234 @@ private:
 		return;
 	}
 
+#pragma region MIRROR_DELETE
+	void m_remove_balance(Node* node) {
+		if (node->left != null) {
+			throw std::exception("AMOGUS");
+			return;
+		}
+		Node* son = node->right;
+		if (node->color == RED && son->color == BLACK) {
+#ifdef DEBUG
+			std::cout << "Parent is red and son is black\n";
+#endif
+			bool lb = son->right == null, rb = son->left == null;
+			if (!lb) lb = son->right->color == BLACK;
+			if (!rb) rb = son->left->color == BLACK;
+			if (lb && rb) {
+#ifdef DEBUG
+				std::cout << "Grandsons are black: recoloring\n";
+#endif
+				node->color = RED;
+				son->color = BLACK;
+				return;
+			}
+			if (!lb) {
+#ifdef DEBUG
+				std::cout << "right grandson is red: moving\n";
+#endif
+				Node* A = node;
+				Node* B = node->right;
+				Node* C = node->right->right;
+				Node* D = node->right->left;
+				if (A == root) {
+					root = B;
+					B->parent = null;
+				}
+				else {
+					A->getNode() = B;
+					B->parent = A->parent;
+				}
+				B->right = C;
+				B->left = A;
+				C->parent = B;
+				A->parent = B;
+				A->right = D;
+				if (D != null)
+					D->parent = A;
+				C->color = BLACK;
+				B->color = RED;
+				A->color = BLACK;
+				return;
+			}
+			if (!rb) {
+#ifdef DEBUG
+				std::cout << "left grandson is red: moving\n";
+#endif
+				Node* A = node;
+				Node* B = node->right;
+				Node* C = node->right->right;
+				Node* D = node->right->left;
+				Node* E = node->right->left->right;
+				Node* F = node->right->left->left;
+				if (A == root) {
+					root = D;
+					D->parent = null;
+				}
+				else {
+					A->getNode() = D;
+					D->parent = A->parent;
+				}
+				D->right = B;
+				D->left = A;
+				B->right = C;
+				B->left = E;
+				B->parent = D;
+				A->right = F;
+				A->left = null;
+				A->parent = D;
+				if (C != null)
+					C->parent = B;
+				if (E != null)
+					E->parent = B;
+				if (F != null)
+					F->parent = A;
+				return;
+			}
+		}
+		if (node->color == BLACK && son->color == RED) {
+#ifdef DEBUG
+			std::cout << "Node color is black and son color is red\n";
+#endif
+			bool lb = son->left->right == null, rb = son->left->left == null;
+			if (!lb) lb = son->left->right->color == BLACK;
+			if (!rb) rb = son->left->left->color == BLACK;
+			if (lb && rb) {
+#ifdef DEBUG
+				std::cout << "Grandsons are black: moving\n";
+#endif
+				Node* A = node;
+				Node* B = node->right;
+				Node* C = node->right->left;
+				if (A == root) {
+					root = B;
+					B->parent = null;
+				}
+				else {
+					A->getNode() = B;
+					B->parent = A->parent;
+				}
+				B->left = A;
+				A->parent = B;
+				A->right = C;
+				C->parent = A;
+				B->color = BLACK;
+				A->color = BLACK;
+				C->color = RED;
+				return;
+			}
+			if (!lb) {
+#ifdef DEBUG
+				std::cout << "right grandson is red: moving\n";
+#endif
+				Node* A = node;
+				Node* B = node->right;
+				Node* C = node->right->left;
+				Node* D = node->right->left->right;
+				Node* E = node->right->left->left;
+				if (A == root) {
+					root = C;
+					C->parent = null;
+				}
+				else {
+					A->getNode() = C;
+					C->parent = A->parent;
+				}
+				C->right = B;
+				C->left = A;
+				B->left = D;
+				B->parent = C;
+				A->right = E;
+				A->parent = C;
+				D->parent = B;
+				if (E != null)
+					E->parent = D;
+				C->color = BLACK;
+				B->color = RED;
+				D->color = BLACK;
+				A->color = BLACK;
+				return;
+			}
+		}
+		if (node->color = BLACK && son->color == BLACK) {
+#ifdef DEBUG
+			std::cout << "Node and son color are both black\n";
+#endif
+			if (son->left != null) {
+				if (son->left->color == RED) {
+#ifdef DEBUG
+					std::cout << "left grandson is red: moving\n";
+#endif
+					Node* A = node;
+					Node* B = node->right;
+					Node* C = node->right->right;
+					Node* D = node->right->left;
+					Node* E = node->right->left->right;
+					Node* F = node->right->left->left;
+					if (A == root) {
+						root = D;
+						D->parent = null;
+					}
+					else {
+						A->getNode() = D;
+						D->parent = A->parent;
+					}
+					D->right = B;
+					D->left = A;
+					B->parent = D;
+					B->right = C;
+					B->left = E;
+					A->parent = D;
+					A->right = F;
+					if (C != null)
+						C->parent = B;
+					if (E != null)
+						E->parent = B;
+					if (F != null)
+						F->parent = A;
+					A->color = BLACK;
+					B->color = BLACK;
+					D->color = BLACK;
+					return;
+				}
+			}
+			bool lb = son->right == null, rb = son->left == null;
+			if (!lb) lb = son->right->color == BLACK;
+			if (!rb) rb = son->left->color == BLACK;
+			if (lb && rb) {
+				son->color = RED;
+				if (node == root)
+					return;
+				for (Node* i = son; ; i = i->parent) {
+					if (i->parent == root) {
+						if (root->left = i) {
+							go(root->right);
+							return;
+						}
+						if (root->right = i) {
+							go(root->left);
+							return;
+						}
+					}
+				}
+			}
+		}
+		std::cout << "NOT YET\n";
+		return;
+	}
+#pragma endregion
+
 	void go(Node* node) {
 		if (node == null)
 			return;
 		if (node->color == BLACK) {
 			node->color = RED;
 			add_balance(node->left);
-			add_balance(node->right);
+			add_balance(node->left);
 			return;
 		}
 		go(node->left);
-		go(node->right);
+		go(node->left);
 	}
 
 	void remove_action(Node* node) override {
