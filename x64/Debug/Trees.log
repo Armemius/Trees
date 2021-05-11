@@ -1,2 +1,4 @@
 ﻿  Source.cpp
+C:\Trees\Treap.h(35,34): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Trees\Treap.h(37,22): warning C4244: =: преобразование "double" в "int", возможна потеря данных
   Trees.vcxproj -> C:\Trees\x64\Debug\Trees.exe

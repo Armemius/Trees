@@ -150,6 +150,7 @@
     <ClInclude Include="RBTree.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TInclude.h" />
+    <ClInclude Include="Treap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

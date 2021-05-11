@@ -9,6 +9,8 @@
 #include <vector>
 #include <algorithm>
 #include <math.h>
+#include <cstdlib>
+#include <ctime>
 
 enum COLORS : int {
 	RED = 0,
@@ -16,5 +18,5 @@ enum COLORS : int {
 	LIGHT_BLUE = 2,
 	GREEN = 3,
 	WHITE = 4,
-	TMP_COLOR = 666
+	VIOLET = 5
 };

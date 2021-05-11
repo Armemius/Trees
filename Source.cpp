@@ -2,7 +2,7 @@
 #include "TInclude.h"
 
 int main() {
-	RBTree tree;
+	Treap tree;
 	for (;;) {
 		char c;
 		int n;
@@ -13,11 +13,9 @@ int main() {
 		if (c == 'd' || c == 'D')
 			tree.remove(n);
 		if (c == 'c' || c == 'C')
-			tree = RBTree();
+			tree = Treap();
 		std::cout << std::endl;
 		tree.out();
-		std::cout << std::endl;
-		tree.getBalance();
 		std::cout << std::endl;
 	}
 }

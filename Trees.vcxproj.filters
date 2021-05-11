@@ -53,5 +53,8 @@
     <ClInclude Include="RBTree.h">
       <Filter>Файлы заголовков\Trees</Filter>
     </ClInclude>
+    <ClInclude Include="Treap.h">
+      <Filter>Файлы заголовков\Trees</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
