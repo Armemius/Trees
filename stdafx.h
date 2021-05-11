@@ -15,5 +15,6 @@ enum COLORS : int {
 	BLACK = 1,
 	LIGHT_BLUE = 2,
 	GREEN = 3,
-	WHITE = 4
+	WHITE = 4,
+	TMP_COLOR = 666
 };

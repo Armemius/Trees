@@ -196,523 +196,316 @@ private:
 	}
 #pragma endregion
 
-#pragma region REMOVING_NODES
+#pragma region REMOVING_NODES 
 	Node* t_remove(int data) override {
 		Node* ob = this->find(data);
-		if (ob == null)
-			return null;
-		if (ob == root && root->isLeaf()) {
-#ifdef DEBUG
-			std::cout << "Removing root\n";
-#endif
-			root = null;
+		if (ob == null) {
 			return null;
 		}
-		return r_remove(ob);
+		return n_remove(ob);
 	}
 
-	Node* r_remove(Node* node) {
-		if (node->left != null && node->right != null) {
-#ifdef DEBUG
-			std::cout << "Node has two sons: moving forward and swapping\n";
-#endif
-			Node* tmp = node->left;
-			for (; tmp->right != null; tmp = tmp->right);
-#ifdef DEBUG
-			std::cout << "Node has two sons, moving forward and swapping:\n" << node->getInfo() << "\n" << tmp->getInfo() << "\n\n";
-#endif
+	Node* n_remove(Node* node) {
+		if (!node->isLeaf()) {
+			Node* tmp = findNearest(node);
 			dswap(node, tmp);
-			return r_remove(tmp);
+			return n_remove(tmp);
 		}
-		if (node->color == RED && node->isLeaf()) {
+		if (getColor(node) == RED) {
 #ifdef DEBUG
-			std::cout << "Node is red" << node->getInfo() << "\nand doesn't have sons, removing\n\n";
+			std::cout << "Node for deletion is red: quiting\n";
 #endif
-			node->getNode() = null;
-			delete node;
+			delete_node(node);
 			return null;
 		}
-		if (node->color == RED && !node->isLeaf())
-			throw std::exception("4to-to poshlo po pizde");
-		if (node->color == BLACK && !node->isLeaf()) {
-#ifdef DEBUG
-			std::cout << "Node is black and has one son: moving forward and swapping\n";
-#endif
-			if (node->left != null) {
-				Node* tmp = node->left;
-				for (; tmp->right != null; tmp = tmp->right);
-#ifdef DEBUG
-				std::cout << node->getInfo() << "\n" << tmp->getInfo() << "\n\n";
-#endif
-				dswap(node, tmp);
-				return r_remove(tmp);
-			} else {
-				Node* tmp = node->right;
-				for (; tmp->left != null; tmp = tmp->left);
-#ifdef DEBUG
-				std::cout << node->getInfo() << "\n" << tmp->getInfo() << "\n\n";
-#endif
-				dswap(node, tmp);
-				return r_remove(tmp);
-			}
-		}
-		//Ahahaha ya neuravnovesheniy mne nuzhno v izolyator)))
-		if (node->color == BLACK && node->isLeaf()) {
-			node->getNode() = null;
-			Node* tmp = node->parent;
-			delete node;
-			remove_balance(tmp);
-		}
-		return null;
-	}
-
-	//Протестить и пофиксить все баги
-	void remove_balance(Node* node) {
-		if (node->right != null) {
-			m_remove_balance(node);
-			return;
-		}
-		Node* son = node->left;
-		if (node->color == RED && son->color == BLACK) {
-#ifdef DEBUG
-			std::cout << "Parent is red and son is black\n";
-#endif
-			bool lb = son->left == null, rb = son->right == null;
-			if (!lb) lb = son->left->color == BLACK;
-			if (!rb) rb = son->right->color == BLACK;
-			if (lb && rb) {
-#ifdef DEBUG
-				std::cout << "Grandsons are black: recoloring\n";
-#endif
-				node->color = RED;
-				son->color = BLACK;
-				return;
-			}
-			if (!lb) {
-#ifdef DEBUG
-				std::cout << "Left grandson is red: moving\n";
-#endif
-				Node* A = node;
-				Node* B = node->left;
-				Node* C = node->left->left;
-				Node* D = node->left->right;
-				if (A == root) {
-					root = B;
-					B->parent = null;
-				} else {
-					A->getNode() = B;
-					B->parent = A->parent;
-				}
-				B->left = C;
-				B->right = A;
-				C->parent = B;
-				A->parent = B;
-				A->left = D;
-				if (D != null)
-					D->parent = A;
-				C->color = BLACK;
-				B->color = RED;
-				A->color = BLACK;
-				return;
-			}
-			if (!rb) {
-#ifdef DEBUG
-				std::cout << "Right grandson is red: moving\n";
-#endif
-				Node* A = node;
-				Node* B = node->left;
-				Node* C = node->left->left;
-				Node* D = node->left->right;
-				Node* E = node->left->right->left;
-				Node* F = node->left->right->right;
-				if (A == root) {
-					root = D;
-					D->parent = null;
-				}
-				else {
-					A->getNode() = D;
-					D->parent = A->parent;
-				}
-				D->left = B;
-				D->right = A;
-				B->left = C;
-				B->right = E;
-				B->parent = D;
-				A->left = F;
-				A->right = null;
-				A->parent = D;
-				if (C != null)
-					C->parent = B;
-				if (E != null)
-					E->parent = B;
-				if (F != null)
-					F->parent = A;
-				return;
-			}
-		}
-		if (node->color == BLACK && son->color == RED) {
-#ifdef DEBUG
-			std::cout << "Node color is black and son color is red\n";
-#endif
-			bool lb = son->right->left == null, rb = son->right->right == null;
-			if (!lb) lb = son->right->left->color == BLACK;
-			if (!rb) rb = son->right->right->color == BLACK;
-			if (lb && rb) {
-#ifdef DEBUG
-				std::cout << "Grandsons are black: moving\n";
-#endif
-				Node* A = node;
-				Node* B = node->left;
-				Node* C = node->left->right;
-				if (A == root) {
-					root = B;
-					B->parent = null;
-				} else {
-					A->getNode() = B;
-					B->parent = A->parent;
-				}
-				B->right = A;
-				A->parent = B;
-				A->left = C;
-				C->parent = A;
-				B->color = BLACK;
-				A->color = BLACK;
-				C->color = RED;
-				return;
-			}
-			if (!lb) {
-#ifdef DEBUG
-				std::cout << "Left grandson is red: moving\n";
-#endif
-				Node* A = node;
-				Node* B = node->left;
-				Node* C = node->left->right;
-				Node* D = node->left->right->left;          
-				Node* E = node->left->right->right;     
-				if (A == root) {
-					root = C;
-					C->parent = null;
-				}
-				else {
-					A->getNode() = C;
-					C->parent = A->parent;
-				}
-				C->left = B;
-				C->right = A;
-				B->right = D;
-				B->parent = C;
-				A->left = E;
-				A->parent = C;
-				D->parent = B;
-				if (E != null)
-					E->parent = D;
-				C->color = BLACK;
-				B->color = RED;
-				D->color = BLACK;
-				A->color = BLACK;
-				return;
-			}
-		}
-		if (node->color = BLACK && son->color == BLACK) {
-#ifdef DEBUG
-			std::cout << "Node and son color are both black\n";
-#endif
-			if (son->right != null) {
-				if (son->right->color == RED) {
-#ifdef DEBUG
-					std::cout << "Right grandson is red: moving\n";
-#endif
-					Node* A = node;
-					Node* B = node->left;
-					Node* C = node->left->left;
-					Node* D = node->left->right;
-					Node* E = node->left->right->left;
-					Node* F = node->left->right->right;
-					if (A == root) {
-						root = D;
-						D->parent = null;
-					} else {
-						A->getNode() = D;
-						D->parent = A->parent;
-					}
-					D->left = B;
-					D->right = A;
-					B->parent = D;
-					B->left = C;
-					B->right = E;
-					A->parent = D;
-					A->left = F;
-					if (C != null)
-						C->parent = B;
-					if (E != null)
-						E->parent = B;
-					if (F != null)
-						F->parent = A;
-					A->color = BLACK;
-					B->color = BLACK;
-					D->color = BLACK;
-					return;
-				}
-			}
-			bool lb = son->left == null, rb = son->right == null;
-			if (!lb) lb = son->left->color == BLACK;
-			if (!rb) rb = son->right->color == BLACK;
-			if (lb && rb) {
-				son->color = RED;
-				if (node == root)
-					return;
-				for (Node* i = son; ; i = i->parent) {
-					if (i->parent == root) {
-						if (root->right = i) {
-							go(root->left);
-							return;
-						}
-						if (root->left = i) {
-							go(root->right);
-							return;
-						}
-					}
-				}
-			}
-		}
-		std::cout << "NOT YET\n";
-		return;
-	}
-
-#pragma region MIRROR_DELETE
-	void m_remove_balance(Node* node) {
-		if (node->left != null) {
-			throw std::exception("AMOGUS");
-			return;
-		}
-		Node* son = node->right;
-		if (node->color == RED && son->color == BLACK) {
-#ifdef DEBUG
-			std::cout << "Parent is red and son is black\n";
-#endif
-			bool lb = son->right == null, rb = son->left == null;
-			if (!lb) lb = son->right->color == BLACK;
-			if (!rb) rb = son->left->color == BLACK;
-			if (lb && rb) {
-#ifdef DEBUG
-				std::cout << "Grandsons are black: recoloring\n";
-#endif
-				node->color = RED;
-				son->color = BLACK;
-				return;
-			}
-			if (!lb) {
-#ifdef DEBUG
-				std::cout << "right grandson is red: moving\n";
-#endif
-				Node* A = node;
-				Node* B = node->right;
-				Node* C = node->right->right;
-				Node* D = node->right->left;
-				if (A == root) {
-					root = B;
-					B->parent = null;
-				}
-				else {
-					A->getNode() = B;
-					B->parent = A->parent;
-				}
-				B->right = C;
-				B->left = A;
-				C->parent = B;
-				A->parent = B;
-				A->right = D;
-				if (D != null)
-					D->parent = A;
-				C->color = BLACK;
-				B->color = RED;
-				A->color = BLACK;
-				return;
-			}
-			if (!rb) {
-#ifdef DEBUG
-				std::cout << "left grandson is red: moving\n";
-#endif
-				Node* A = node;
-				Node* B = node->right;
-				Node* C = node->right->right;
-				Node* D = node->right->left;
-				Node* E = node->right->left->right;
-				Node* F = node->right->left->left;
-				if (A == root) {
-					root = D;
-					D->parent = null;
-				}
-				else {
-					A->getNode() = D;
-					D->parent = A->parent;
-				}
-				D->right = B;
-				D->left = A;
-				B->right = C;
-				B->left = E;
-				B->parent = D;
-				A->right = F;
-				A->left = null;
-				A->parent = D;
-				if (C != null)
-					C->parent = B;
-				if (E != null)
-					E->parent = B;
-				if (F != null)
-					F->parent = A;
-				return;
-			}
-		}
-		if (node->color == BLACK && son->color == RED) {
-#ifdef DEBUG
-			std::cout << "Node color is black and son color is red\n";
-#endif
-			bool lb = son->left->right == null, rb = son->left->left == null;
-			if (!lb) lb = son->left->right->color == BLACK;
-			if (!rb) rb = son->left->left->color == BLACK;
-			if (lb && rb) {
-#ifdef DEBUG
-				std::cout << "Grandsons are black: moving\n";
-#endif
-				Node* A = node;
-				Node* B = node->right;
-				Node* C = node->right->left;
-				if (A == root) {
-					root = B;
-					B->parent = null;
-				}
-				else {
-					A->getNode() = B;
-					B->parent = A->parent;
-				}
-				B->left = A;
-				A->parent = B;
-				A->right = C;
-				C->parent = A;
-				B->color = BLACK;
-				A->color = BLACK;
-				C->color = RED;
-				return;
-			}
-			if (!lb) {
-#ifdef DEBUG
-				std::cout << "right grandson is red: moving\n";
-#endif
-				Node* A = node;
-				Node* B = node->right;
-				Node* C = node->right->left;
-				Node* D = node->right->left->right;
-				Node* E = node->right->left->left;
-				if (A == root) {
-					root = C;
-					C->parent = null;
-				}
-				else {
-					A->getNode() = C;
-					C->parent = A->parent;
-				}
-				C->right = B;
-				C->left = A;
-				B->left = D;
-				B->parent = C;
-				A->right = E;
-				A->parent = C;
-				D->parent = B;
-				if (E != null)
-					E->parent = D;
-				C->color = BLACK;
-				B->color = RED;
-				D->color = BLACK;
-				A->color = BLACK;
-				return;
-			}
-		}
-		if (node->color = BLACK && son->color == BLACK) {
-#ifdef DEBUG
-			std::cout << "Node and son color are both black\n";
-#endif
-			if (son->left != null) {
-				if (son->left->color == RED) {
-#ifdef DEBUG
-					std::cout << "left grandson is red: moving\n";
-#endif
-					Node* A = node;
-					Node* B = node->right;
-					Node* C = node->right->right;
-					Node* D = node->right->left;
-					Node* E = node->right->left->right;
-					Node* F = node->right->left->left;
-					if (A == root) {
-						root = D;
-						D->parent = null;
-					}
-					else {
-						A->getNode() = D;
-						D->parent = A->parent;
-					}
-					D->right = B;
-					D->left = A;
-					B->parent = D;
-					B->right = C;
-					B->left = E;
-					A->parent = D;
-					A->right = F;
-					if (C != null)
-						C->parent = B;
-					if (E != null)
-						E->parent = B;
-					if (F != null)
-						F->parent = A;
-					A->color = BLACK;
-					B->color = BLACK;
-					D->color = BLACK;
-					return;
-				}
-			}
-			bool lb = son->right == null, rb = son->left == null;
-			if (!lb) lb = son->right->color == BLACK;
-			if (!rb) rb = son->left->color == BLACK;
-			if (lb && rb) {
-				son->color = RED;
-				if (node == root)
-					return;
-				for (Node* i = son; ; i = i->parent) {
-					if (i->parent == root) {
-						if (root->left = i) {
-							go(root->right);
-							return;
-						}
-						if (root->right = i) {
-							go(root->left);
-							return;
-						}
-					}
-				}
-			}
-		}
-		std::cout << "NOT YET\n";
-		return;
-	}
-#pragma endregion
-
-	void go(Node* node) {
-		if (node == null)
-			return;
-		if (node->color == BLACK) {
-			node->color = RED;
-			add_balance(node->left);
-			add_balance(node->left);
-			return;
-		}
-		go(node->left);
-		go(node->left);
+		Node* tmp = node->parent;
+		delete_node(node);
+		return tmp;
 	}
 
 	void remove_action(Node* node) override {
+#ifdef DEBUG
+		std::cout << "Black height violation: fixing" << node->getInfo() << "\n";
+#endif
+		if (node->right == null)
+			balance_right(node);
+		else
+			balance_left(node);
+	}
+
+	void balance_right(Node* node, bool rebalance = false) {
+		Node* father = node;
+		Node* son = node->left;
+#ifdef DEBUG
+		std::cout << "\nFather's color is " << (getColor(father) == BLACK ? "black" : "red") << "\n";
+		std::cout << "Son's color is " << (getColor(son) == BLACK ? "black" : "red") << "\n";
+		std::cout << "Left grandson's color is " << (getColor(son->left) == BLACK ? "black" : "red") << "\n";
+		std::cout << "Right grandson's color is " << (getColor(son->right) == BLACK ? "black" : "red") << "\n";
+#endif
+		if (getColor(father) == RED && getColor(son->left) == BLACK && getColor(son->right) == BLACK) {
+#ifdef DEBUG
+			std::cout << "[CASE R-RB-1]\n";
+#endif 
+			father->color = BLACK;
+			son->color = RED;
+			return;
+		}
+
+		if (getColor(father) == RED && getColor(son->left) == RED) {
+#ifdef DEBUG
+			std::cout << "[CASE R-RB-2-L]\n";
+#endif 
+			rotateRight(father);
+			Node* core = father->parent;
+			core->color = RED;
+			core->left->color = BLACK;
+			core->right->color = BLACK;
+			return;
+		}
+
+		if (getColor(father) == RED && getColor(son->right) == RED) {
+#ifdef DEBUG
+			std::cout << "[CASE R-RB-2-R]\n";
+#endif 
+			Node* A = father;
+			Node* B = son;
+			Node* C = son->right;
+			Node* D = C->left;
+			Node* E = C->right;
+			if (A == root) {
+				root = C;
+				C->parent = null;
+			} else {
+				A->getNode() = C;
+				C->parent = A->parent;
+			}
+			C->left = B;
+			C->right = A;
+			C->color = RED;
+			B->parent = C;
+			B->right = D;
+			B->color = BLACK;
+			A->parent = C;
+			A->left = E;
+			A->color = BLACK;
+			if (D != null)
+				D->parent = B;
+			if (E != null)
+				E->parent = A;
+			return;
+		}
+
+		if (getColor(father) == BLACK && getColor(son) == RED && getColor(son->right->left) == BLACK && getColor(son->right->right) == BLACK) {
+#ifdef DEBUG
+			std::cout << "[CASE R-BR-3]\n";
+#endif 
+			Node* A = father;
+			Node* B = son;
+			Node* C = son->right;
+			if (A == root) {
+				root = B;
+				B->parent = null;
+			}
+			else {
+				A->getNode() = B;
+				B->parent = A->parent;
+			}
+			B->right = A;
+			B->color = BLACK;
+			A->parent = B;
+			A->left = C;
+			A->color = BLACK;
+			C->parent = A;
+			C->color = RED;
+			return;
+		}
+
+		if (getColor(father) == BLACK && getColor(son) == RED && getColor(son->right->left) == RED) {
+#ifdef DEBUG
+			std::cout << "[CASE R-BR-4-L]\n";
+#endif 
+			Node* A = father;
+			Node* B = son;
+			Node* C = son->right;
+			Node* D = C->left;
+			Node* E = C->right;
+			if (A == root) {
+				root = C;
+				C->parent = null;
+			}
+			else {
+				A->getNode() = C;
+				C->parent = A->parent;
+			}
+			C->left = B;
+			C->right = A;
+			C->color = BLACK;
+			B->parent = C;
+			B->right = D;
+			B->color = RED;
+			A->parent = C;
+			A->left = E;
+			A->color = BLACK;
+			D->parent = B;
+			D->color = BLACK;
+			if (E != null)
+				E->parent = A;
+			return;
+		}
+
+		if (getColor(father) == BLACK && getColor(son) == RED && getColor(son->right->right) == RED) {
+#ifdef DEBUG
+			std::cout << "[CASE R-BR-4-R]\n";
+#endif 
+			Node* A = father;
+			Node* B = son;
+			Node* C = son->right;
+			Node* D = C->right;
+			if (A == root) {
+				root = B;
+				B->parent = null;
+			}
+			else {
+				A->getNode() = B;
+				B->parent = A->parent;
+			}
+			B->right = D;
+			B->color = BLACK;
+			D->right = A;
+			D->left = C;
+			D->parent = B;
+			D->color = RED;
+			C->parent = D;
+			C->color = BLACK;
+			A->parent = D;
+			A->color = BLACK;
+			C->right = null;
+			A->left = null;
+			return;
+		}
+
+		if (getColor(father) == BLACK && getColor(son) == BLACK && getColor(son->right) == RED) {
+#ifdef DEBUG
+			std::cout << "[CASE R-BB-5-R]\n";
+#endif 
+			Node* A = father;
+			Node* B = son;
+			Node* C = son->right;
+			Node* D = C->left;
+			Node* E = C->right;
+			if (A == root) {
+				root = C;
+				C->parent = null;
+			}
+			else {
+				A->getNode() = C;
+				C->parent = A->parent;
+			}
+			C->left = B;
+			C->right = A;
+			C->color = BLACK;
+			B->parent = C;
+			B->right = D;
+			B->color = BLACK;
+			A->parent = C;
+			A->left = E;
+			A->color = BLACK;
+			if (D != null)
+				D->parent = B;
+			if (E != null)
+				E->parent = A;
+			return;
+		}
+		
+		if (getColor(father) == BLACK && getColor(son) == BLACK && getColor(son->left) == RED) {
+#ifdef DEBUG
+			std::cout << "[CASE R-BB-5-L]\n";
+#endif 
+			son->left->color = BLACK;
+			rotateRight(father);
+			return;
+		}
+
+		if (getColor(father) == BLACK && getColor(son) == BLACK && getColor(son->left) == BLACK && getColor(son->right) == BLACK) {
+#ifdef DEBUG
+			std::cout << "[CASE R-BB-6]\n";
+#endif 
+			son->color = RED;
+			if (father == root)
+				return;
+			balance_next(father);
+			return;
+		}
+	}
+
+	void balance_left(Node* node, bool rebalance = false) {
 
 	}
+
+	void balance_next(Node* node) {
+		if (node->parent->left == node)
+			balance_left(node->parent, true);
+		else
+			balance_right(node->parent, true);
+	}
+
+	void delete_node(Node* node) {
+		if (node == root) {
+			root = null;
+			return;
+		}
+		node->getNode() = null;
+		delete node;
+		return;
+	}
 #pragma endregion
+
+	Node* findNearest(Node* node) {
+		if (node->left != null) {
+			node = node->left;
+			for (; node->right != null; node = node->right);
+		} else if (node->right != null) {
+			node = node->right;
+			for (; node->left != null; node = node->left);
+		}
+		return node;
+	}
+
+	void rotateLeft(Node* node) {
+		Node* child = node->right;
+		node->right = child->left;
+
+		if (node->right != null)
+			node->right->parent = node;
+
+		child->parent = node->parent;
+
+		if (node->parent == null)
+			root = child;
+		else 
+			node->getNode() = child;
+
+		child->left = node;
+		node->parent = child;
+	}
+
+	void rotateRight(Node* node) {
+		Node* child = node->left;
+		node->left = child->right;
+
+		if (node->left != null)
+			node->left->parent = node;
+
+		child->parent = node->parent;
+
+		if (node->parent == null)
+			root = child;
+		else
+			node->getNode() = child;
+
+		child->right = node;
+		node->parent = child;
+	}
 
 	int getBrotherColor(Node* node) {
 		if (node->parent == null)
@@ -752,5 +545,9 @@ private:
 		if (grand->left == father)
 			return grand->right;
 		return grand->left;
+	}
+
+	int getColor(Node* node) {
+		return node == null ? BLACK : node->color;
 	}
 };
