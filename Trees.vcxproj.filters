@@ -56,5 +56,8 @@
     <ClInclude Include="Treap.h">
       <Filter>Файлы заголовков\Trees</Filter>
     </ClInclude>
+    <ClInclude Include="SplayTree.h">
+      <Filter>Файлы заголовков\Trees</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

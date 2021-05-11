@@ -148,6 +148,7 @@
     <ClInclude Include="ITree.h" />
     <ClInclude Include="Nodes.h" />
     <ClInclude Include="RBTree.h" />
+    <ClInclude Include="SplayTree.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TInclude.h" />
     <ClInclude Include="Treap.h" />
