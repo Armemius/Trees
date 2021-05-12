@@ -178,16 +178,12 @@ class SplayTree : public ITree {
 			root = tree2;
 			tree2->parent = null;
 			Node* tmp = root;
-			for (; tmp->left != null; tmp = tmp->left);
-			splay(tmp);
 			return;
 		}
 		if (tree2 == null) {
 			root = tree1;
 			tree1->parent = null;
 			Node* tmp = root;
-			for (; tmp->right != null; tmp = tmp->right);
-			splay(tmp);
 			return;
 		}
 #ifdef DEBUG
