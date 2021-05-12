@@ -1,7 +1,7 @@
 #pragma once
 
 #define null 0
-#define DEBUG
+//#define DEBUG
 
 #include <iostream>
 #include <string>

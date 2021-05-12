@@ -13,7 +13,7 @@ public:
 
 	int data = 0;
 	int color = RED;
-	int weight = 0;
+	int weight = -1;
 	Node* left = null;
 	Node* right = null;
 	Node* parent = null;
