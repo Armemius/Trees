@@ -53,6 +53,7 @@ public:
 		Node* tmp = t_add(data);
 		if (tmp != null)
 			add_action(tmp);
+		reloadRenderKey();
 		return;
 	}
 
@@ -60,6 +61,7 @@ public:
 		Node* tmp = t_remove(data);
 		if (tmp != null)
 			remove_action(tmp);
+		reloadRenderKey();
 		return;
 	}
 
@@ -77,6 +79,7 @@ public:
 	}
 
 	void reloadRenderKey() {
+		dtreeOld = dtree;
 		dtree = DTree();
 		int width = std::pow(2, getHeight(root));
 		dtree.nodes.push_back(DNode(0,0, root->data, root->color, root->weight));
@@ -91,7 +94,7 @@ public:
 	}
 
 private:
-	DTree dtree;
+	DTree dtree, dtreeOld;
 	void reloader(Node* node, int x, int y, int width) {
 		dtree.nodes.push_back(DNode(x, y, node->data, node->color, node->weight));
 		if (node->left != null) {

@@ -30,6 +30,9 @@
     <ClCompile Include="Nodes.cpp">
       <Filter>Файлы ресурсов\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Handler.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Nodes.h">
