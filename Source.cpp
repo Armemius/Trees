@@ -2,7 +2,7 @@
 #include "TInclude.h"
 
 int main() {
-	Treap tree;
+	SplayTree tree;
 	for (;;) {
 		char c;
 		int n;
@@ -13,7 +13,7 @@ int main() {
 		if (c == 'd' || c == 'D')
 			tree.remove(n);
 		if (c == 'c' || c == 'C')
-			tree = Treap();
+			tree = SplayTree();
 		std::cout << std::endl;
 		tree.out();
 		std::cout << std::endl;

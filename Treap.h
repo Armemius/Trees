@@ -130,7 +130,7 @@ class Treap : public ITree {
 	}
 
 	void remove_action(Node* node) override {
-		//Ni nada
+		//Ne treba
 	}
 
 };

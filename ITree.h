@@ -2,6 +2,16 @@
 #include "stdafx.h"
 #include "Nodes.h"
 
+struct Screed {
+	int x0 = 0, y0 = 0;
+	int x1 = 0, y1 = 0;
+};
+
+struct ShowNode {
+	int x =  0, y = 0;
+	Node* node = null;
+};
+
 void dswap(Node*& first, Node*& second) {
 	int data = first->data;
 	first->data = second->data;
